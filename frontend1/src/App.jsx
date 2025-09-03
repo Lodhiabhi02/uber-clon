@@ -9,6 +9,8 @@ import Home from "./pages/Home";
 import UserProtectedWrapper from "./pages/UserProtectedWrapper";
 import UserLogout from "./pages/UserLogout";
 import CaptainHome from "./pages/CaptainHome";
+import Test from "./pages/TestPage";
+import NotFound from "./pages/NotFound";
 
 
 const App = () =>
@@ -50,3 +52,18 @@ const App = () =>
   );
 };
 export default App;
+
+// src/App.jsx
+// import React from "react";
+// import { Routes, Route } from "react-router-dom";
+// import TestPage from "./pages/TestPage";
+// const App = () =>
+// {
+//   return (
+//     <Routes>
+//       <Route path="/" element={<TestPage />} />
+//     </Routes>
+//   );
+// };
+
+// export default App;
