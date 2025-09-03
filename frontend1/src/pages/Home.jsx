@@ -20,13 +20,14 @@ const Home = () =>
   const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
   const [driverRidePanel, setDriverRidePanel] = useState(false);
+ const [waitingfordriver,setWaitingForDriver] =useState(false);
 
   const panelRef = useRef(null);
   const vehiclePanelRef = useRef(null);
   const panelCloseRef = useRef(null);
   const confirmRideRef = useRef(null);
   const driverRideRef = useRef(null);
-
+  const waitingfordriverRef = useRef(null); 
   const submitHandler = (e) => e.preventDefault();
 
   // Search panel
@@ -107,28 +108,28 @@ const Home = () =>
     [driverRidePanel]
   );
 
-  // Ride creation API
-  async function createRide()
-  {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/rides/create`,
-        {
-          pickup,
-          destination,
-          vehicleType,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log("Ride created:", response.data);
-    } catch (error) {
-      console.error("Error creating ride:", error);
-    }
-  }
+  useGSAP(
+    () =>
+    {
+      if (waitingfordriver) {
+        gsap.to(driverRideRef.current, {
+          y: "0%",
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      } else {
+        gsap.to(waitingfordriverRef.current, {
+          y: "100%",
+          duration: 0.5,
+          ease: "power2.in",
+        });
+      }
+    },
+    [waitingfordriver]
+  );
+
+  
+  
 
   return (
     <div className="h-screen relative overflow-hidden">
@@ -163,7 +164,7 @@ const Home = () =>
           <h4 className="text-2xl font-semibold">Find a trip</h4>
 
           <form onSubmit={submitHandler}>
-            <div className="line absolute h-16 w-1 bg-gray-700 left-10 rounded-full top-[47%]"></div>
+            <div className="line absolute h-16 w-1 bg-gray-700 left-10 rounded-full top-[37%]"></div>
 
             <input
               onClick={() => setPanelOpen(true)}

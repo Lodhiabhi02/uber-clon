@@ -1,28 +1,34 @@
-import React from 'react'
-const LocataionSearchPanel = () =>
-{
+import React from "react";
+
+const LocationSearchPanel = ({ setVehiclePanel }) => {
   const locations = [
-    { id: 1, name: '24B , Near Kapoor\'s cafe, chemic inductires area' },
-    { id: 2, name: 'Sector 18, Noida area north' },
-    { id: 3, name: 'Noida Expressway  this is lorem' },
-    { id: 4, name: 'Film City, Noida this also lore,' },
-    { id: 5, name: 'Sector 11, Noida it is alos lorem' },
-  ]
+    "d24,vijay nagar near to school,bhopal",
+    "kolar road near to reliance trend,bhopal",
+    "kolar road near to reliance smart,bhopal",
+    "kolar road near to hotel landmark,bhopal",
+    "kolar road near to hotel the mark,bhopal",
+    "kolar road near to hotel the landmark,bhopal",
+    "kolar road near to hotel the mark,bhopal",
+    "kolar road near to hotel the landmark,bhopal",
+    "kolar road near to hotel the mark,bhopal",
+  ];
 
   return (
     <div>
-
-      {
-        locations.map((location) => (
-          <div key={location.id} className="flex gap-4  items-center my-2 justify-center">
-            <h2 className="bg-[#eee] h-8 flex items-center justify=center w-11 "></h2>
-            <h4 className="font-medium">{location.name}</h4>
-          </div>
-        ))
-      }
-
+      {locations.map((elem, index) => (
+        <div
+          key={index}
+          onClick={() => setVehiclePanel(true)}
+          className="flex gap-4 border-2 p-3 border-gray-50 active:border-black rounded-xl items-center my-2 justify-start cursor-pointer"
+        >
+          <h2 className="bg-[#eee] h-8 flex items-center justify-center w-12 rounded-full">
+            <i className="ri-map-pin-fill"></i>
+          </h2>
+          <h4 className="font-medium">{elem}</h4>
+        </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default LocataionSearchPanel;
+export default LocationSearchPanel;
