@@ -11,6 +11,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 
+
 const Home = () =>
 {
   const [pickup, setPickup] = useState("");
@@ -20,14 +21,14 @@ const Home = () =>
   const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
   const [driverRidePanel, setDriverRidePanel] = useState(false);
- const [waitingfordriver,setWaitingForDriver] =useState(false);
+  const [waitingfordriver, setWaitingForDriver] = useState(false);
 
   const panelRef = useRef(null);
   const vehiclePanelRef = useRef(null);
   const panelCloseRef = useRef(null);
   const confirmRideRef = useRef(null);
   const driverRideRef = useRef(null);
-  const waitingfordriverRef = useRef(null); 
+  const waitingfordriverRef = useRef(null);
   const submitHandler = (e) => e.preventDefault();
 
   // Search panel
@@ -128,15 +129,15 @@ const Home = () =>
     [waitingfordriver]
   );
 
-  
-  
+
+
 
   return (
     <div className="h-screen relative overflow-hidden">
       {/* Logo */}
       <img
         className="w-16 absolute left-5 top-5"
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2O8wUs3nqWEqeyv2pgoS5IVjRdop5vpGTr43cu6eTGRgFRtoZFzaLg3pgWMLXZUlmt10&usqp=CAU"
+        src="https://www.logo.wine/a/logo/Uber/Uber-Logo.wine.svg"
         alt="logo"
       />
 
@@ -144,7 +145,7 @@ const Home = () =>
       <div className="h-screen w-screen">
         <img
           className="h-full w-full object-cover"
-          src="https://cdn.theatlantic.com/thumbor/BlEOtTo9L9mjMLuyCcjG3xYr4qE=/0x48:1231x740/960x540/media/img/mt/2017/04/IMG_7105/original.png"
+          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
           alt="background"
         />
       </div>
@@ -195,7 +196,7 @@ const Home = () =>
       {/* Vehicle panel */}
       <div
         ref={vehiclePanelRef}
-        className="fixed w-full z-10 bg-white px-3 py-8 bottom-0 translate-y-full"
+        className="fixed w-full z-10 bg-white px-3 py-8 bottom-0 "
       >
         <VehiclePanel
           setVehiclePanel={setVehiclePanelOpen}
@@ -212,7 +213,6 @@ const Home = () =>
         <ConfirmRide
           setConfirmRidePanel={setConfirmRidePanel}
           setDriverRidePanel={setDriverRidePanel}
-          createRide={createRide}
         />
       </div>
 
