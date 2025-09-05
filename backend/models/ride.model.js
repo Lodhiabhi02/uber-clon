@@ -43,8 +43,18 @@ const rideSchema = new mongoose.Schema({
    },
    signature: {
        type: String
-   }
-});
+   },
+otp: {
+  type: Number,
+  required: true,
+  default: function() {
+    const min = Math.pow(10, 5);
+    const max = Math.pow(10, 6) - 1;
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+}
+})
+
 
 
 module.exports = mongoose.model("ride", rideSchema);

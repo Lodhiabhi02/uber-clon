@@ -26,26 +26,30 @@ async function getAddressCoordinates(address) {
 // ✅ Get distance & time between origin and destination
 async function getDistanceTime(origin, destination) {
   const apiKey = process.env.GOOGLE_MAPS_API;
-
   if (!apiKey) throw new Error("Google Maps API key not set");
 
   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
     origin
   )}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
 
-  const response = await axios.get(url);
+  try {
+    const response = await axios.get(url, { timeout: 10000 });
 
-  if (response.data.status !== "OK") return null;
+    const element = response.data.rows[0].elements[0];
 
-  const element = response.data.rows[0].elements[0];
-  if (element.status !== "OK") return null;
 
-  return {
-    distance: element.distance.text,
-    duration: element.duration.text,
-    distanceValue: element.distance.value, // meters
-    durationValue: element.duration.value  // seconds
-  };
+    if (!element || element.status !== 'OK') {
+      throw new Error(`Failed to resolve origin/destination: ${element?.status}`);
+    }
+
+    return {
+      distance: element.distance.value / 1000, // meters → km (number)
+      time: element.duration.value / 60        // seconds → minutes (number)
+    };
+  } catch (err) {
+    console.error('Map API request failed:', err.message);
+    return null;
+  }
 }
 
 // ✅ Get autocomplete suggestions using Google Places API
