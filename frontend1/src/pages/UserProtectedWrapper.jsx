@@ -1,22 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserDataContext } from '../../../frontend/src/Context/UserContext';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserProtectedWrapper = ({ children }) =>
 {
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() =>
   {
-    // Watch for token changes
-    if (!localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
       console.log("Token missing, redirecting to login");
       navigate("/userlogin");
+    } else {
+      // ✅ Optionally verify token with backend
+      setIsAuthenticated(true);
     }
-  }, [navigate, token]);
+  }, [navigate]);
 
-  return <div>{children}</div>;
+  if (!isAuthenticated) {
+    // Prevent flicker before redirect
+    return null;
+  }
+
+  return <>{children}</>;
 };
 
 export default UserProtectedWrapper;
