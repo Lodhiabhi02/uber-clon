@@ -1,0 +1,6 @@
+{
+  "terminal.integrated.mouseWheelZoom": true,
+  "editor.mouseWheelScrollSensitivity": 1,
+  "workbench.list.mouseWheelScrollSensitivity": 1,
+  "terminal.integrated.mouseWheelScrollSensitivity": 0.5
+}

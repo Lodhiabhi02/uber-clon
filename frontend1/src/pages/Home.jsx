@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import "remixicon/fonts/remixicon.css";
@@ -9,6 +9,9 @@ import ConfirmRide from "../components/ConfirmRide";
 import LookingForDriver from "../components/LookingForDriver";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../Context/UserContext";
+import { useContext } from "react";
+import { SocketContext } from "../Context/SocketContext";
 
 
 
@@ -30,6 +33,22 @@ const Home = () =>
   const [DistanceAndTime, setDistanceAndTime] = useState({});
   const [vechicleType, setVechicleType] = useState({});
   const [createRideData, setCreateRideData] = useState({});
+
+  const { sendMessage, recievedMessage } = useContext(SocketContext);
+
+  const { user } = useContext(UserDataContext);
+
+  useEffect(() =>
+  {
+    console.log("User:", user);
+    if (user) {
+      sendMessage("join", {
+        userId: user._id,   
+        userType: "user",
+      });
+    }
+  }, [user, sendMessage]);
+
 
   const handlePickupChange = async (e) =>
   {

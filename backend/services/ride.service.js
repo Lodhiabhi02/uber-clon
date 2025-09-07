@@ -19,23 +19,26 @@ async function getFare(pickup, destination) {
 
   // Calculate fares for each vehicle type
   return {
-    auto:
+    auto:Math.round(
       baseFare.auto +
       distanceTime.distance * perKmRate.auto +
-      distanceTime.time * perMinuteRate.auto,
+      distanceTime.time * perMinuteRate.auto
+    ),
 
-    car:
-      baseFare.car +
+    car: Math.round
+     ( baseFare.car +
       distanceTime.distance * perKmRate.car +
-      distanceTime.time * perMinuteRate.car,
+      distanceTime.time * perMinuteRate.car),
 
-    motorcycle:
+    motorcycle: Math.round 
+     (
       baseFare.motorcycle +
       distanceTime.distance * perKmRate.motorcycle +
-      distanceTime.time * perMinuteRate.motorcycle,
+      distanceTime.time * perMinuteRate.motorcycle)
   };
 }
 
+module.exports.getFare = getFare;
 
 // generrate otp
 

@@ -1,21 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { CaptainDataContext } from '../context/CapatainContext'
+import { CaptainDataContext } from '../Context/CaptainContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const CaptainProtectWrapper = ({
     children
-}) => {
+}) =>
+{
 
     const token = localStorage.getItem('token')
     const navigate = useNavigate()
     const { captain, setCaptain } = useContext(CaptainDataContext)
-    const [ isLoading, setIsLoading ] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
 
 
 
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!token) {
             navigate('/captainlogin')
         }
@@ -24,20 +26,22 @@ const CaptainProtectWrapper = ({
             headers: {
                 Authorization: `Bearer ${token}`
             }
-        }).then(response => {
+        }).then(response =>
+        {
             if (response.status === 200) {
                 setCaptain(response.data.captain)
                 setIsLoading(false)
             }
         })
-            .catch(err => {
+            .catch(err =>
+            {
 
                 localStorage.removeItem('token')
                 navigate('/captainlogin')
             })
-    }, [ token ])
+    }, [token])
 
-    
+
 
     if (isLoading) {
         return (

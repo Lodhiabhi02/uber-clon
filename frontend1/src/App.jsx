@@ -6,18 +6,20 @@ import CaptainLogin from "./pages/CaptainLogin";
 import CaptainSignup from "./pages/CaptainSignup";
 import Home from "./pages/Home";
 import UserProtectedWrapper from "./pages/UserProtectedWrapper";
+import CaptainProtectWrapper from "./pages/CaptainProtectedWrapper";
 import UserLogout from "./pages/UserLogout";
 import CaptainHome from "./pages/CaptainHome";
 import Riding from "./pages/Riding";
 import CaptainRiding from "./pages/CaptainRiding";
-  // default export alias is fine
-import TestPage from "./pages/TestPage"; // ✅ correct import
-// (optional) import NotFound from "./pages/NotFound";
+import Start from "./pages/Start";
+import TestPage from "./pages/TestPage";
+import { SocketProvider } from "./Context/SocketContext"; // Add this import
 
-const App = () => {
+const App = () =>
+{
   return (
     <Routes>
-      <Route path="/" element={<TestPage />} />   {/* ✅ use TestPage */}
+      <Route path="/" element={<Start />} />
       <Route path="/test" element={<TestPage />} />
       <Route path="/riding" element={<Riding />} />
       <Route path="/userlogin" element={<UserLogin />} />
@@ -25,14 +27,19 @@ const App = () => {
       <Route path="/captainlogin" element={<CaptainLogin />} />
       <Route path="/captainsignup" element={<CaptainSignup />} />
       <Route path="/captain-riding" element={<CaptainRiding />} />
+
+      {/* User routes with socket provider for users */}
       <Route
         path="/home"
         element={
           <UserProtectedWrapper>
-            <Home />
+            <SocketProvider type="user">
+              <Home />
+            </SocketProvider>
           </UserProtectedWrapper>
         }
       />
+
       <Route
         path="/userlogout"
         element={
@@ -41,17 +48,37 @@ const App = () => {
           </UserProtectedWrapper>
         }
       />
+
+      {/* Captain routes with socket provider for captains */}
       <Route
         path="/captain-home"
         element={
-          <UserProtectedWrapper>
-            <CaptainHome />
-          </UserProtectedWrapper>
+          <CaptainProtectWrapper>
+            <SocketProvider type="captain">
+              <CaptainHome />
+            </SocketProvider>
+          </CaptainProtectWrapper>
         }
       />
+
+      {/* You might also want to add socket provider to captain-riding if it needs real-time features */}
+      {/* 
+      <Route 
+        path="/captain-riding" 
+        element={
+          <CaptainProtectWrapper>
+            <SocketProvider type="captain">
+              <CaptainRiding />
+            </SocketProvider>
+          </CaptainProtectWrapper>
+        } 
+      />
+      */}
+
       {/* optional */}
       {/* <Route path="*" element={<NotFound />} /> */}
     </Routes>
   );
 };
+
 export default App;

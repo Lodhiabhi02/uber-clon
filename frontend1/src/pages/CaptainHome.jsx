@@ -1,13 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import CaptainDetails from '../components/CaptainDetails'
 import RidePopUp from '../components/RidePopUp'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
+import { CaptainDataContext } from '../Context/CaptainContext'
+import { SocketContext } from "../Context/SocketContext"
 
 const CaptainHome = () =>
 {
+  // Get captain data from context instead of local state
+  const { captain, setCaptain } = useContext(CaptainDataContext)
+  const { sendMessage, receiveMessage } = useContext(SocketContext)
+
   // State for panels
   const [ridePopUpPanel, setRidePopUpPanel] = useState(false)
   const [confirmRidePanel, setConfirmRidePanel] = useState(false)
@@ -16,11 +22,67 @@ const CaptainHome = () =>
   const ridePopupPanelRef = useRef(null)
   const confirmRidePanelRef = useRef(null)
 
-  // Open RidePopUp automatically when component mounts
   useEffect(() =>
   {
-    setRidePopUpPanel(true)
-  }, [])
+    setRidePopUpPanel(true);
+
+    if (captain?._id) {
+      // Join the socket room
+      sendMessage("join", {
+        userId: captain._id,
+        userType: "captain",
+      });
+
+      receiveMessage("new-ride", (data) =>
+      {
+        console.log("New ride request:", data);
+        // You might want to update state here to show the ride popup
+      });
+
+
+      const updateLocation = () =>
+      {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) =>
+            {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+
+              // ✅ Log location values
+              console.log("📍 Captured location:", { lat, lng, userId: captain._id });
+
+              // ✅ Use sendMessage instead of socket.emit
+              console.log("Sending update-location-captain via sendMessage");
+              sendMessage("update-location-captain", {
+                userId: captain._id,
+                location: { lat, lng },
+              });
+
+              // ✅ Confirm event sent
+              console.log("📤 Sent 'update-location-captain' to server via sendMessage");
+            },
+            (error) =>
+            {
+              console.error("❌ Geolocation error:", error);
+            }
+          );
+        }
+      };
+
+      // Update immediately + then every 5s
+      updateLocation();
+      const locationInterval = setInterval(updateLocation, 10000);
+
+      return () =>
+      {
+        clearInterval(locationInterval);
+      };
+    }
+  }, [captain, sendMessage, receiveMessage]);
+
+
+
 
   // Animate Ride Popup
   useGSAP(() =>
@@ -70,7 +132,7 @@ const CaptainHome = () =>
 
       {/* Bottom Info Card */}
       <div className="h-2/5 p-6">
-        <CaptainDetails />
+        <CaptainDetails captain={captain} />
       </div>
 
       {/* Ride Popup Panel */}
@@ -78,8 +140,10 @@ const CaptainHome = () =>
         ref={ridePopupPanelRef}
         className="fixed w-full z-10 bottom-0 bg-white px-3 py-8 translate-y-full"
       >
-        <RidePopUp setRidePopUpPanel={setRidePopUpPanel} 
-        setConfirmRidePanel={setConfirmRidePanel} />
+        <RidePopUp
+          setRidePopUpPanel={setRidePopUpPanel}
+          setConfirmRidePanel={setConfirmRidePanel}
+        />
       </div>
 
       {/* Confirm Ride Popup Panel */}

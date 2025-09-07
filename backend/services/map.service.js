@@ -1,5 +1,5 @@
 const axios = require('axios');
-
+const CaptainModel = require('../models/captain.model');
 // ✅ Get coordinates from an address using Google Geocoding API
 async function getAddressCoordinates(address) {
   const apiKey = process.env.GOOGLE_MAPS_API;
@@ -72,8 +72,25 @@ async function getAutoCompleteSuggestions(input) {
   }));
 }
 
+async function getCaptainsInTheRadius(lat, lng, radius) {
+  // radius in KM
+
+  const captains = await CaptainModel.find({
+    location: {
+      $geoWithin: {
+        $centerSphere: [[lng, lat], radius / 111.045]
+      }
+    }
+  });
+
+  return captains
+}
+
+
+
 module.exports = {
   getAddressCoordinates,
   getDistanceTime,
-  getAutoCompleteSuggestions
+  getAutoCompleteSuggestions,
+  getCaptainsInTheRadius
 };

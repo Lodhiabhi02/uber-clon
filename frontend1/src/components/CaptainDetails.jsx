@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react';
+import { CaptainDataContext } from '../Context/CaptainContext';
 
+const CaptainDetails = () =>
+{
+  const { captain } = useContext(CaptainDataContext);
 
-const CaptainDetails = () => {
-  
+  // Log the captain data to inspect its structure
+  // console.log("Captain data:", captain);
+
+  if (!captain) {
+    // Optional: render a loading state if data is not ready
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg text-gray-500">Loading captain details...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -16,14 +29,13 @@ const CaptainDetails = () => {
               src="https://tse1.mm.bing.net/th/id/OET.7252da000e8341b2ba1fb61c275c1f30?w=594&h=594&c=7&rs=1&o=5&pid=1.9"
               alt="Driver"
             />
-            <h4 className="text-lg font-medium">Abhishek Lodhi</h4>
+            <h4 className="text-lg font-medium">
+              {captain.fullname?.firstname || ""} {captain.fullname?.lastname || ""}
+            </h4>
           </div>
 
           {/* Earnings clickable */}
-          <div
-            className="text-right cursor-pointer active:scale-95 transition"
-            
-          >
+          <div className="text-right cursor-pointer active:scale-95 transition">
             <h4 className="text-xl font-semibold flex items-start">
               <span className="text-sm align-top">$</span>
               <span>295.20</span>
@@ -53,10 +65,7 @@ const CaptainDetails = () => {
       </div>
 
       {/* Confirm Ride Panel */}
-      <div
-        
-        className="fixed w-full h-1/2 z-20 bottom-0 translate-y-full bg-white px-5 py-6 shadow-lg rounded-t-3xl"
-      >
+      <div className="fixed w-full h-1/2 z-20 bottom-0 translate-y-full bg-white px-5 py-6 shadow-lg rounded-t-3xl">
         <h2 className="text-xl font-semibold mb-4">Confirm Ride</h2>
 
         <div className="mb-4">
@@ -68,11 +77,9 @@ const CaptainDetails = () => {
           <h3 className="text-lg font-medium">Fare: ₹250</h3>
           <p className="text-sm text-gray-600">Cash</p>
         </div>
-
-        
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CaptainDetails
+export default CaptainDetails;

@@ -1,49 +1,51 @@
-const rideModel = require('../models/ride.model');
-const mapService = require('../services/map.service');
+const { validationResult } = require("express-validator");
+const rideModel = require("../models/ride.model");
+const mapService = require("../services/map.service");
+const rideService = require("../services/ride.service");
+const {sendMessageToSocketId} = require("../socket");
+  
+// Controller for GET /get-fare
 
-async function getFare(pickup, destination) {
-  if (!pickup || !destination) {
-    throw new Error('Pickup and destination are required');
+module.exports.getFare = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-  const distanceTime = await mapService.getDistanceTime(pickup, destination);
 
-   if (!distanceTime || typeof distanceTime.distance !== 'number' || typeof distanceTime.time !== 'number') {
-    throw new Error('Failed to get distance and time from map service');
+  const { pickup, destination } = req.query;
+
+  try {
+    // Example: Call your map service to calculate fare
+    const fare = await rideService.getFare(pickup, destination);
+
+    return res.status(200).json({ fare });
+  } catch (err) {
+    console.error("❌ Error in getFare:", err);
+    return res.status(500).json({ error: err.message });
   }
+};
 
-  const baseFare = { auto: 30, car: 50, motorcycle: 20 };
-  const perKmRate = { auto: 8, car: 10, motorcycle: 5 };
-  const perMinuteRate = { auto: 0.25, car: 0.5, motorcycle: 0.1 };
 
-  return {
-    auto:
-      baseFare.auto +
-      distanceTime.distance * perKmRate.auto +
-      distanceTime.time * perMinuteRate.auto,
-    car:
-      baseFare.car +
-      distanceTime.distance * perKmRate.car +
-      distanceTime.time * perMinuteRate.car,
-    motorcycle:
-      baseFare.motorcycle +
-      distanceTime.distance * perKmRate.motorcycle +
-      distanceTime.time * perMinuteRate.motorcycle,
-  };
-}
-
+// Controller for POST /create
 module.exports.createRide = async (req, res) => {
   try {
     const { pickup, destination, vehicleType } = req.body;
     const userId = req.user?._id;
 
+    console.log("📥 Incoming ride request:", { userId, pickup, destination, vehicleType });
+
     if (!userId || !pickup || !destination || !vehicleType) {
-      return res
-        .status(400)
-        .json({ error: 'User, pickup, destination, and vehicleType are required' });
+      console.warn("⚠️ Missing required fields:", { userId, pickup, destination, vehicleType });
+      return res.status(400).json({
+        error: "User, pickup, destination, and vehicleType are required",
+      });
     }
 
-    const fare = await getFare(pickup, destination);
+    // Fare calculation
+    const fare = await rideService.getFare(pickup, destination);
+    console.log("💰 Calculated fare:", fare);
 
+    // Save ride
     const ride = await rideModel.create({
       user: userId,
       pickup,
@@ -52,12 +54,38 @@ module.exports.createRide = async (req, res) => {
       fare: fare[vehicleType],
     });
 
-    return res.status(201).json({
-      message: 'Ride created successfully',
+    console.log("✅ Ride created in DB:", ride._id);
+
+    res.status(201).json({
+      message: "Ride created successfully",
       ride,
     });
+
+    // After responding → do async background work
+    try {
+      const pickupCoordinates = await mapService.getAddressCoordinates(pickup);
+      // const pickupCoordinates = { lat: 23.189711524536936, lng: 79.90988884528421 };
+      console.log("📍 Pickup coordinates:", pickupCoordinates);
+
+      const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.lat, pickupCoordinates.lng, 10000);
+      console.log("🧭 Captains in radius:", captainsInRadius);
+
+      ride.otp = ""
+    const rideWithUser = await rideModel.findOne({_id:ride._id}).populate("user");
+
+      captainsInRadius.map(captain => {
+       console.log(captain,)
+        sendMessageToSocketId(captain.socketId,{
+          eventName: "new-ride",
+          data: rideWithUser
+        })
+
+      })
+    } catch (mapErr) {
+      console.error("❌ Map service error:", mapErr.message);
+    }
   } catch (error) {
-    console.error('❌ Error in createRide:', error);
+    console.error("❌ Error in createRide:", error);
     return res.status(500).json({ error: error.message });
   }
 };

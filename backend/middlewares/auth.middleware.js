@@ -9,7 +9,7 @@ const blacklistTokenModel = require("../models/blacklistToken.model");
 module.exports.authUser = async (req, res, next) => {
   try {
     const token = req.cookies.token || req.header('Authorization')?.split(' ')[1];
-    console.log("Token received:", token);
+    // console.log("Token received:", token);
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized: No token provided" });
@@ -22,10 +22,10 @@ module.exports.authUser = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
+    // console.log("Decoded token:", decoded);
 
     const user = await userModel.findById(decoded._id);
-    console.log("User found in DB:", user);
+    // console.log("User found in DB:", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

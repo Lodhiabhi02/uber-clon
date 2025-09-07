@@ -5,8 +5,8 @@ const LookingForDriver = ({ setDriverRidePanel, pickup, vehicleType, destination
 {
   useEffect(() =>
   {
-    console.log("🚖 Vehicle Type changed:", vehicleType);
-    console.log("🖼️ Image URL selected:", vehicleImages[vehicleType]);
+    // console.log("🚖 Vehicle Type changed:", vehicleType);
+    // console.log("🖼️ Image URL selected:", vehicleImages[vehicleType]);
   }, [vehicleType]);
   // ✅ Map vehicle types to images
   const vehicleImages = {
