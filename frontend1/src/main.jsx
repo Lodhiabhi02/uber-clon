@@ -9,17 +9,17 @@ import { BrowserRouter } from "react-router-dom";
 import ErrorBoundary from './ErrorBoundary.jsx';
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <SocketProvider>
-        <CaptainContext>
-          <UserContext>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </UserContext>
-        </CaptainContext>
-      </SocketProvider>
-    </ErrorBoundary>
-  </StrictMode>
+
+  <ErrorBoundary>
+    <SocketProvider>
+      <CaptainContext>
+        <UserContext>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </UserContext>
+      </CaptainContext>
+    </SocketProvider>
+  </ErrorBoundary>
+
 );

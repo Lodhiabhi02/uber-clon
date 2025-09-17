@@ -66,7 +66,7 @@ const CaptainDetails = () =>
 
       {/* Confirm Ride Panel */}
       <div className="fixed w-full h-1/2 z-20 bottom-0 translate-y-full bg-white px-5 py-6 shadow-lg rounded-t-3xl">
-        <h2 className="text-xl font-semibold mb-4">Confirm Ride</h2>
+        <h2 className="text-xl font-semibold mb-4">Conform Ride</h2>
 
         <div className="mb-4">
           <h3 className="text-lg font-medium">Pickup: 562/11-A</h3>
